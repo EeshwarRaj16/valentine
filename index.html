@@ -2,46 +2,77 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- THIS FIXES THE ZOOM ISSUE (DO NOT REMOVE) -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>Just One Honest Moment 💖</title>
 
 <style>
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+  height: 100vh;
+  overflow: hidden;
   font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #333;
 }
 
+/* FLOATING HEARTS */
+.heart {
+  position: absolute;
+  bottom: -40px;
+  font-size: 18px;
+  opacity: 0.6;
+  animation: floatUp linear infinite;
+}
+
+@keyframes floatUp {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-120vh); }
+}
+
+/* MAIN WRAPPER */
 .wrapper {
   width: 100%;
   max-width: 360px;
-  padding: 20px;
+  padding: 18px;
+  z-index: 2;
 }
 
+/* CARD */
 .card {
-  background: rgba(255,255,255,0.95);
-  border-radius: 24px;
+  background: rgba(255,255,255,0.96);
+  border-radius: 28px;
   padding: 26px 22px;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-  animation: fadeSlide 0.6s ease;
+  box-shadow: 0 20px 45px rgba(0,0,0,0.2);
+  animation: cardEnter 0.8s ease;
 }
 
-.hidden { display: none; }
+@keyframes cardEnter {
+  from { opacity: 0; transform: translateY(40px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.hidden {
+  display: none;
+}
 
 p {
   font-size: 16px;
   line-height: 1.5;
+  color: #333;
   margin-bottom: 18px;
 }
 
+/* SELECT */
 select {
   width: 100%;
   padding: 12px;
@@ -51,6 +82,7 @@ select {
   margin-bottom: 18px;
 }
 
+/* BUTTONS */
 button {
   width: 100%;
   padding: 14px;
@@ -59,28 +91,40 @@ button {
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
+  transition: transform 0.15s ease;
 }
 
-.next { background: #ffd1dc; }
-#yes { background: #9be7c4; }
-#no  { background: #ffb3b3; margin-top: 12px; }
-
-@keyframes fadeSlide {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+button:active {
+  transform: scale(0.96);
 }
 
+.next {
+  background: #ffd1dc;
+}
+
+#yes {
+  background: #9be7c4;
+}
+
+#no {
+  background: #ffb3b3;
+  margin-top: 12px;
+}
+
+/* FADE OUT */
 .fadeOut {
-  animation: fadeOut 1s ease forwards;
+  animation: fadeOut 0.8s ease forwards;
 }
 
 @keyframes fadeOut {
-  to { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 0; transform: translateY(-20px); }
 }
 </style>
 </head>
 
 <body>
+
+<!-- HEARTS ARE ADDED BY JS -->
 
 <div class="wrapper">
 
@@ -133,27 +177,40 @@ button {
 </div>
 
 <script>
+/* HEART GENERATOR */
+for (let i = 0; i < 20; i++) {
+  const h = document.createElement("div");
+  h.className = "heart";
+  h.innerHTML = "❤️";
+  h.style.left = Math.random() * 100 + "vw";
+  h.style.animationDuration = (6 + Math.random() * 6) + "s";
+  h.style.fontSize = (14 + Math.random() * 12) + "px";
+  document.body.appendChild(h);
+}
+
+/* FLOW */
 function next(n) {
   document.getElementById("c" + n).classList.add("hidden");
   document.getElementById("c" + (n + 1)).classList.remove("hidden");
 }
 
+/* FINAL + EMAIL */
 function finalAnswer(answer) {
   const q1 = document.getElementById("q1").value;
   const q2 = document.getElementById("q2").value;
   const q3 = document.getElementById("q3").value;
   const q4 = document.getElementById("q4").value;
 
-  const email = "eeshwarraj16@gmail.com"; // CHANGE THIS
+  const email = "eeshwarraj16@gmail.com"; // 🔴 CHANGE THIS
   const subject = "💖 Valentine Answers";
 
   const body = `
 Her Answers 💖
 
-1. ${q1}
-2. ${q2}
-3. ${q3}
-4. ${q4}
+1️⃣ ${q1}
+2️⃣ ${q2}
+3️⃣ ${q3}
+4️⃣ ${q4}
 
 Final Answer: ${answer}
 `;
@@ -164,18 +221,19 @@ Final Answer: ${answer}
     "&body=" + encodeURIComponent(body);
 
   const card = document.getElementById("c5");
+  card.classList.add("fadeOut");
 
-  card.innerHTML =
-    answer === "YES"
-    ? "<p style='font-size:18px;'>🥰 That made my day.</p><p>Opening mail… 💌</p>"
-    : "<p style='font-size:18px;'>😌 Too late…</p><p>You’re already my Valentine 💖</p><p>Opening mail… 💌</p>";
-
-  // Delay + open mail (works on mobile + laptop)
   setTimeout(() => {
-    const opened = window.open(mailto, "_self");
-    if (!opened) {
-      window.location.href = mailto;
-    }
+    card.classList.remove("fadeOut");
+    card.innerHTML =
+      answer === "YES"
+        ? "<p style='font-size:18px;'>🥰 That made my day.</p><p>Opening email… 💌</p>"
+        : "<p style='font-size:18px;'>😌 Too late…</p><p>You’re already my Valentine 💖</p><p>Opening email… 💌</p>";
+  }, 700);
+
+  /* DELAY BEFORE EMAIL */
+  setTimeout(() => {
+    window.location.href = mailto;
   }, 5000);
 }
 </script>
